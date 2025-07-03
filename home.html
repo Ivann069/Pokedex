@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Pokédex</title>
+</head>
+<body>
+  <h1>My Pokédex</h1>
+  <form id="searchForm">
+    <input type="text" id="pokemonName" placeholder="Enter Pokémon name" required>
+    <button type="submit">Search</button>
+  </form>
+  <div id="result"></div>
+  <script>
+    document.getElementById('searchForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const name = document.getElementById('pokemonName').value.trim();
+      if (!name) return;
+      const res = await fetch(`/get-pokemon-info?name=${encodeURIComponent(name)}`);
+      const data = await res.json();
+      if (data.error) {
+        document.getElementById('result').innerHTML = `<p>${data.error}</p>`;
+      } else {
+        document.getElementById('result').innerHTML = `
+          <h2>${data.name}</h2>
+          <img src="${data.image}" alt="${data.name}">
+          <p>Types: ${data.types.join(', ')}</p>
+          <p>Habitat: ${data.habitat}</p>
+          <p>Environment: ${data.environment}</p>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
